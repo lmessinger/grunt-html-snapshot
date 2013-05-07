@@ -18,7 +18,11 @@ var sendMessage = function (arg) {
 
 var sanitizeHtml = function(html){
     //remove weird pseudo new lines
-    html = html.replace(/\\n/g,"");
+    html = html.replace(/\\n/g,"\n");
+    // remove weird tabs
+    html = html.replace(/\\t/g,"\t");
+    // add a pre-render data attribute
+    html = html.replace(/<body/,"<body data-prerendered='data-prerendered' ");
 
     //replace werid escaped quotes with real quotes
     html = html.replace(/\\"/g,'"');
