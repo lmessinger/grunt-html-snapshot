@@ -16,13 +16,14 @@ var sendMessage = function (arg) {
     fs.write(tmpfile, JSON.stringify(args) + "\n", "a");
 };
 
-var sanitizeHtml = function(html){
+var sanitizeHtml = function(html,options){
     //remove weird pseudo new lines
     html = html.replace(/\\n/g,"\n");
     // remove weird tabs
     html = html.replace(/\\t/g,"\t");
-    // add a pre-render data attribute
-    html = html.replace(/<body/,"<body data-prerendered='data-prerendered' ");
+    // add a custom attribute if so required
+    if (options.bodyAttr)
+        html = html.replace(/<body/,"<body " + options.bodyAttr + "='" + options.bodyAttr + "' ");
 
     //replace werid escaped quotes with real quotes
     html = html.replace(/\\"/g,'"');
@@ -64,7 +65,7 @@ page.open(url, function (status) {
             var html = page.evaluate(function () {
                 return  JSON.stringify(document.all[0].outerHTML);
             });
-            sendMessage("htmlSnapshot.pageReady", sanitizeHtml(html), url);
+            sendMessage("htmlSnapshot.pageReady", sanitizeHtml(html,options), url);
 
             phantom.exit();
         }, options.msWaitForPages);
